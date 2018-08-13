@@ -114,8 +114,7 @@ auto conv2d(const xt::xexpression<T>& data,
     // pre-shaped result
     auto _result = xt::linalg::dot(im2col, xt::transpose(f)); // Get out N*P*Q, K
     _result.reshape({N, P, Q, K}); // cheap reshape
-    // Need to call eval() or else it breaks.
-    auto result = xt::eval(xt::transpose(_result, {N_IDX, 3, 1, 2})); // expensive transpose
+    auto result = xt::transpose(std::move(_result), {N_IDX, 3, 1, 2}); // expensive transpose
 #else
     std::conditional_t<(T::static_layout == O::static_layout) &&
                        (T::static_layout != layout_type::dynamic),
